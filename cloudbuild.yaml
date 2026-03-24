@@ -33,6 +33,7 @@ steps:
 substitutions:
   _SERVICE_NAME: money-magic
   _REGION: europe-west2
+  _REPO: cloud-run-builds
 
 options:
   logging: CLOUD_LOGGING_ONLY
