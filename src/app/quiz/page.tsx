@@ -38,8 +38,8 @@ function generateQuestions(): Question[] {
     emoji: "🪙",
   });
 
-  // Type 2: Adding coins
-  const c1 = COINS[Math.floor(Math.random() * 6)]; // keep values manageable
+  // Type 2: Adding two coins
+  const c1 = COINS[Math.floor(Math.random() * 6)];
   const c2 = COINS[Math.floor(Math.random() * 6)];
   const sum = c1.value + c2.value;
   const correctAnswer2 = formatMoney(sum);
@@ -97,15 +97,13 @@ function generateQuestions(): Question[] {
   // Type 5: Which is more?
   const [coinA, coinB] = shuffle([...COINS]).slice(0, 2);
   const moreExpensive = coinA.value > coinB.value ? coinA : coinB;
+  const sameValue = coinA.value === coinB.value;
+  const correctAnswer5 = sameValue ? "They're the same" : moreExpensive.name;
   const options5 = shuffle([coinA.name, coinB.name, "They're the same"]);
   questions.push({
     text: `Which is worth more: ${coinA.name} or ${coinB.name}?`,
-    options: coinA.value === coinB.value
-      ? shuffle([coinA.name, coinB.name, "They're the same"])
-      : options5,
-    correctIndex: coinA.value === coinB.value
-      ? shuffle([coinA.name, coinB.name, "They're the same"]).indexOf("They're the same")
-      : options5.indexOf(moreExpensive.name),
+    options: options5,
+    correctIndex: options5.indexOf(correctAnswer5),
     emoji: "⚖️",
   });
 
@@ -134,7 +132,103 @@ function generateQuestions(): Question[] {
     });
   }
 
-  return shuffle(questions);
+  // Type 7: Adding THREE coins (harder)
+  const t7coins = shuffle([...COINS].filter(c => c.value <= 100)).slice(0, 3);
+  const sum7 = t7coins[0].value + t7coins[1].value + t7coins[2].value;
+  const correctAnswer7 = formatMoney(sum7);
+  const wrong7 = [
+    formatMoney(sum7 + 10),
+    formatMoney(Math.max(1, sum7 - 10)),
+    formatMoney(sum7 + 20),
+  ];
+  const options7 = shuffle([correctAnswer7, ...wrong7]);
+  questions.push({
+    text: `${t7coins[0].name} + ${t7coins[1].name} + ${t7coins[2].name} = ?`,
+    options: options7,
+    correctIndex: options7.indexOf(correctAnswer7),
+    emoji: "🔥",
+  });
+
+  // Type 8: Buying multiples (word problem)
+  const itemNames = [
+    { name: "apple", emoji: "🍎", price: 20 },
+    { name: "banana", emoji: "🍌", price: 15 },
+    { name: "sweet", emoji: "🍬", price: 10 },
+    { name: "sticker", emoji: "⭐", price: 25 },
+    { name: "pencil", emoji: "✏️", price: 30 },
+  ];
+  const item8 = itemNames[Math.floor(Math.random() * itemNames.length)];
+  const qty8 = Math.floor(Math.random() * 4) + 2; // 2 to 5
+  const total8 = item8.price * qty8;
+  const correctAnswer8 = formatMoney(total8);
+  const wrong8 = [
+    formatMoney(total8 + item8.price),
+    formatMoney(Math.max(1, total8 - item8.price)),
+    formatMoney(item8.price),
+  ];
+  const options8 = shuffle([correctAnswer8, ...wrong8]);
+  questions.push({
+    text: `${item8.emoji} One ${item8.name} costs ${formatMoney(item8.price)}. How much do ${qty8} cost?`,
+    options: options8,
+    correctIndex: options8.indexOf(correctAnswer8),
+    emoji: "🧠",
+  });
+
+  // Type 9: Change from buying TWO items
+  const shopItems9 = [
+    { name: "lolly", price: 15 },
+    { name: "apple", price: 30 },
+    { name: "pencil", price: 20 },
+    { name: "cookie", price: 25 },
+    { name: "sticker", price: 35 },
+  ];
+  const [itemA9, itemB9] = shuffle(shopItems9).slice(0, 2);
+  const totalCost9 = itemA9.price + itemB9.price;
+  const payCoins9 = COINS.filter((c) => c.value > totalCost9);
+  if (payCoins9.length > 0) {
+    const payCoin9 = payCoins9[Math.floor(Math.random() * payCoins9.length)];
+    const change9 = payCoin9.value - totalCost9;
+    const correctAnswer9 = formatMoney(change9);
+    const wrong9 = [
+      formatMoney(change9 + 5),
+      formatMoney(Math.max(1, change9 - 5)),
+      formatMoney(payCoin9.value - itemA9.price),
+    ];
+    const options9 = shuffle([correctAnswer9, ...wrong9]);
+    questions.push({
+      text: `You buy a ${itemA9.name} (${formatMoney(itemA9.price)}) and a ${itemB9.name} (${formatMoney(itemB9.price)}). You pay with ${payCoin9.name}. What's the change?`,
+      options: options9,
+      correctIndex: options9.indexOf(correctAnswer9),
+      emoji: "🛍️",
+    });
+  }
+
+  // Type 10: Subtraction with money
+  const bigCoin10 = COINS.filter(c => c.value >= 50)[
+    Math.floor(Math.random() * COINS.filter(c => c.value >= 50).length)
+  ];
+  const smallCoin10 = COINS.filter(c => c.value < bigCoin10.value && c.value >= 5)[
+    Math.floor(Math.random() * COINS.filter(c => c.value < bigCoin10.value && c.value >= 5).length)
+  ];
+  if (smallCoin10) {
+    const diff10 = bigCoin10.value - smallCoin10.value;
+    const correctAnswer10 = formatMoney(diff10);
+    const wrong10 = [
+      formatMoney(diff10 + 10),
+      formatMoney(Math.max(1, diff10 - 10)),
+      formatMoney(bigCoin10.value + smallCoin10.value),
+    ];
+    const options10 = shuffle([correctAnswer10, ...wrong10]);
+    questions.push({
+      text: `${bigCoin10.name} − ${smallCoin10.name} = ?`,
+      options: options10,
+      correctIndex: options10.indexOf(correctAnswer10),
+      emoji: "➖",
+    });
+  }
+
+  // Pick 10 random questions from the pool (or all if fewer)
+  return shuffle(questions).slice(0, 10);
 }
 
 export default function Quiz() {

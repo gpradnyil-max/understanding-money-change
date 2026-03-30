@@ -16,7 +16,7 @@ export default function PiggyBank() {
   const [addedCoins, setAddedCoins] = useState<AddedCoin[]>([]);
   const [showStar, setShowStar] = useState(false);
   const [targetAmount] = useState(() => {
-    const targets = [50, 75, 100, 125, 150, 200];
+    const targets = [50, 75, 100, 125, 150, 200, 250, 300, 175, 225, 350, 99, 137];
     return targets[Math.floor(Math.random() * targets.length)];
   });
   const [wiggle, setWiggle] = useState(false);

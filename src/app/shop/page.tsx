@@ -29,12 +29,24 @@ const SHOP_ITEMS: ShopItem[] = [
   { name: "Bouncy Ball", emoji: "🔴", price: 35 },
   { name: "Pencil", emoji: "✏️", price: 20 },
   { name: "Rubber Duck", emoji: "🦆", price: 110 },
+  { name: "Toy Car", emoji: "🚗", price: 165 },
+  { name: "Puzzle", emoji: "🧩", price: 137 },
+  { name: "Notebook", emoji: "📓", price: 78 },
+  { name: "Yo-yo", emoji: "🪀", price: 55 },
+  { name: "Balloon", emoji: "🎈", price: 12 },
+  { name: "Comic Book", emoji: "📖", price: 185 },
+  { name: "Toy Robot", emoji: "🤖", price: 195 },
+  { name: "Magnet", emoji: "🧲", price: 67 },
 ];
 
 function getPaymentAmount(price: number): number {
-  const options = COINS.map((c) => c.value).filter((v) => v > price);
-  if (options.length === 0) return 200;
-  return options[Math.floor(Math.random() * options.length)];
+  // Single coin payments
+  const singleOptions = COINS.map((c) => c.value).filter((v) => v > price);
+  // Combined payments for trickier change (e.g. £2+50p, £1+£1, £2+£1)
+  const comboOptions = [250, 300, 350, 400].filter((v) => v > price && v <= 400);
+  const allOptions = [...singleOptions, ...comboOptions];
+  if (allOptions.length === 0) return 200;
+  return allOptions[Math.floor(Math.random() * allOptions.length)];
 }
 
 function generateRound(): { item: ShopItem; payment: number } {

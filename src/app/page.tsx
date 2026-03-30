@@ -39,6 +39,15 @@ const games = [
     shadowColor: "shadow-purple-200",
     delay: "0.3s",
   },
+  {
+    title: "Clock Time",
+    description: "Learn to read clocks and tell the time!",
+    emoji: "🕐",
+    href: "/clock",
+    gradient: "from-indigo-400 to-indigo-600",
+    shadowColor: "shadow-indigo-200",
+    delay: "0.4s",
+  },
 ];
 
 export default function Home() {
